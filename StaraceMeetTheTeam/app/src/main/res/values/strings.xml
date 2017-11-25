@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">StaraceMeetTheTeam</string>
+
+    //titles
+    <string name="main_activity_title">Meet The Team</string>
+    <string name="detail_activity_title">Details</string>
+</resources>
