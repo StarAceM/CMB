@@ -1,5 +1,7 @@
 package starace.com.staracemeettheteam;
 
+import android.content.Context;
+
 import java.util.List;
 
 /**
@@ -10,10 +12,12 @@ public class Contract {
 
     public interface View {
         void setModelList(List<TeamMemberModel> memberModelsList);
+        Context getActivityContext();
+        void updateModelList(TeamMemberModel model, int position);
     }
 
     public interface Presenter {
         void requestModelList();
-        void modelClicked();
+        void modelClicked(TeamMemberModel model, int position);
     }
 }

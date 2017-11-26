@@ -1,7 +1,7 @@
 package starace.com.staracemeettheteam;
 
 import android.content.Context;
-import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,35 +20,47 @@ import java.util.List;
 public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.TeamMemberViewHolder> {
     private List<TeamMemberModel> memberModelList;
     private Context context;
+    private Contract.Presenter presenter;
 
-    public TeamMemberAdapter(List<TeamMemberModel> memberModelList) {
+    public TeamMemberAdapter(List<TeamMemberModel> memberModelList, Contract.Presenter presenter) {
         this.memberModelList = memberModelList;
+        this.presenter = presenter;
     }
 
     @Override
     public TeamMemberViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
         return new TeamMemberViewHolder(LayoutInflater.from(parent.getContext()).
-                inflate(R.layout.main_recycler_view_content,parent,false));
+                inflate(R.layout.main_recycler_view_content, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(TeamMemberViewHolder holder, int position) {
+    public void onBindViewHolder(final TeamMemberViewHolder holder, int position) {
         final TeamMemberModel memberModel = memberModelList.get(position);
-        Picasso.with(context)
-        .load(memberModel.getAvatar())
-        .into(holder.avatarView);
+        loadAvatar(holder.avatarView, memberModel);
         holder.nameView.setText(memberModel.getName());
         holder.titleView.setText(memberModel.getTitle());
-        holder.idView.setText(memberModel.getId());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra("teamMember", memberModel);
-                context.startActivity(intent);
+                presenter.modelClicked(memberModel, holder.getAdapterPosition());
             }
         });
+
+        if (memberModel.isHasMet()) {
+            holder.itemView.setBackground(ContextCompat.getDrawable(context, R.drawable.light_border));
+        } else {
+            holder.itemView.setBackground(ContextCompat.getDrawable(context, R.drawable.dark_border));
+        }
+    }
+
+    private void loadAvatar(final ImageView view, TeamMemberModel model) {
+        Picasso.with(context)
+                .load(model.getAvatar())
+                .resize(300, 300)
+                .centerCrop()
+                .error(R.drawable.default_avatar_100_100)
+                .into(view);
     }
 
     @Override
@@ -60,14 +72,12 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Te
         ImageView avatarView;
         TextView nameView;
         TextView titleView;
-        TextView idView;
 
         public TeamMemberViewHolder(View itemView) {
             super(itemView);
             avatarView = (ImageView) itemView.findViewById(R.id.recycler_avatar);
-            nameView  = (TextView) itemView.findViewById(R.id.recycler_name);
+            nameView = (TextView) itemView.findViewById(R.id.recycler_name);
             titleView = (TextView) itemView.findViewById(R.id.recycler_title);
-            idView = (TextView) itemView.findViewById(R.id.recycler_id);
         }
     }
 }

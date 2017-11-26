@@ -1,5 +1,6 @@
 package starace.com.staracemeettheteam;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,9 @@ public class MainActivity extends BaseActivity implements Contract.View {
         initList();
     }
 
+    /**
+     * progress bar used as if the data to populate the view was coming from a network call
+     */
     private void initProgressBar() {
         progressBar = (ProgressBar) findViewById(R.id.main_progress_bar);
         progressBar.setVisibility(View.VISIBLE);
@@ -40,8 +44,8 @@ public class MainActivity extends BaseActivity implements Contract.View {
 
     private void initList() {
         if (adapter == null) {
-            presenter.requestModelList();
             initProgressBar();
+            presenter.requestModelList();
         }
     }
 
@@ -50,8 +54,18 @@ public class MainActivity extends BaseActivity implements Contract.View {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new TeamMemberAdapter(memberModelsList);
+        adapter = new TeamMemberAdapter(memberModelsList, presenter);
         recyclerView.setAdapter(adapter);
         progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public Context getActivityContext() {
+        return this;
+    }
+
+    @Override
+    public void updateModelList(TeamMemberModel model, int position) {
+        adapter.notifyItemChanged(position, model);
     }
 }

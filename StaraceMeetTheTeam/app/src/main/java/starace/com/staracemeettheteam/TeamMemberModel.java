@@ -16,6 +16,9 @@ public class TeamMemberModel implements Parcelable {
     private String bio;
     private boolean hasMet;
 
+    public TeamMemberModel() {
+    }
+
     public TeamMemberModel(String avatar, String name, String title, String id, String bio) {
         this.avatar = avatar;
         this.name = name;
